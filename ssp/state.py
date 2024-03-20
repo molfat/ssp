@@ -1,10 +1,13 @@
 """Systems of state matrix representation from the Appendix."""
 
+import logging
 
 from typing import NoReturn
 
 import numpy as np
 from numpy.typing import ArrayLike
+
+logger = logging.getLogger(__name__)
 
 
 def convm(x: ArrayLike, p: int) -> np.ndarray:
@@ -35,8 +38,12 @@ def covar(x: ArrayLike, p: int) -> np.ndarray:
     _x = np.array(x, dtype=complex)
     m = len(_x)
     # remove the mean
-    x0 = _x - np.mean(_x)
-    R = np.transpose((convm(x0, p + 1).conjugate())) @ (convm(x0, p + 1) / (m - 1))
+    _x = _x - np.mean(_x)
+    conv = convm(x, p + 1)
+    R = conv.conjugate().transpose() @ conv / (m - 1)
+    logging.warning(f'{conv.shape=}')
+    logging.warning(f'{conv=}')
+
     return R
 
 

@@ -190,25 +190,25 @@ def music(x: ArrayLike, p: int, M: int) -> ArrayLike:
 
     Page 430, Figure 8.19
     """
-    _x = np.array(x).ravel().reshape(-1, 1)
+    _x = np.array(x, ndmin=1)
     if p + 1 > M or len(_x) < M:
         raise ValueError("Size of signal covariance matrix is inappropriate.")
 
     R = covar(x, M)
     d, v = np.linalg.eig(R)
-    ddiag = np.diag(d)
-    i = np.argsort(ddiag)
-    # y = ddiag[i]
+    y = np.sort(d)
+    i = np.argsort(d)
     nfft = max(len(_x) + 1, 1024)
     Px = np.zeros(nfft, dtype=complex)
 
     for j in range(M - p):
         Px = Px + np.abs(np.fft.fft(v[:, i[j]], nfft))
 
+    Ax = Px.copy()
     Px = -20 * np.log10(Px)
     logger.debug(f'{Px.shape=}')
 
-    return Px
+    return Px, Ax
 
 
 def ev(x: ArrayLike, p: int, M: int) -> np.ndarray:

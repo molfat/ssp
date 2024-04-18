@@ -5,4 +5,4 @@ function [vmin, sigma] = phd(x, p)
   sigma = min(diag(d);
   index = find(diag(d) == sigma);
   vmin = v(:, index);
-  end;
+  end;x
